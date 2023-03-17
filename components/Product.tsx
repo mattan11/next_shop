@@ -18,6 +18,7 @@ type ProductListItem = Pick<
 interface ProductProps {
   data: ProductDetails;
 }
+
 export const ProductDetails = ({ data }: ProductProps) => {
   return (
     <div>
@@ -38,9 +39,7 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
     <div>
       <img src={data.thumbnailUrl} alt={data.thumbnailAlt}></img>
       <Link href={`/products/${data.id}/`}>
-        <a>
-          <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
-        </a>
+        <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
       </Link>
     </div>
   );
