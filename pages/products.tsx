@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Main } from "@/components/Main";
 import { InferGetStaticPropsType } from "next";
 import { ProductListItem } from "@/components/Product";
+import { Pagination } from "@/components/Pagination";
 
 interface StoreApiResponse {
   id: number;
@@ -35,6 +36,7 @@ const ProductsPage = ({
     <div className="flex flex-col min-h-screen">
       <Header />
       <Main>
+        <Pagination />
         <ul className="grid  gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {data.map((product) => {
             return (
