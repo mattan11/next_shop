@@ -3,13 +3,18 @@ import { ProductDetails } from "@/components/Product";
 import Link from "next/link";
 import { getProduct, getProducts } from "@/services/products";
 import { Main } from "@/components/Main";
+import { serialize } from "next-mdx-remote/serialize";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 interface StoreApiResponse {
   id: number;
   title: string;
   price: number;
   description: string;
-  longDescription: string;
+  longDescription: MDXRemoteSerializeResult<
+    Record<string, unknown>,
+    Record<string, unknown>
+  >;
   category: string;
   image: string;
   rating: {
@@ -43,9 +48,16 @@ export const getStaticProps = async ({
 
   const data = await getProduct(params.productId);
 
+  if (!data) {
+    return {
+      props: {},
+      notFound: true,
+    };
+  }
+
   return {
     props: {
-      data,
+      data: { ...data, longDescription: await serialize(data.longDescription) },
     },
   };
 };

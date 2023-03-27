@@ -3,12 +3,16 @@ import { Rating } from "./Rating";
 import Image from "next/image";
 import { NextSeo } from "next-seo";
 import { NextLinkMarkdown } from "@/components/NextLinkMarkdown";
+import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 
 interface ProductDetails {
   id: number;
   title: string;
   description: string;
-  longDescription: string;
+  longDescription: MDXRemoteSerializeResult<
+    Record<string, unknown>,
+    Record<string, unknown>
+  >;
   thumbnailUrl: string;
   thumbnailAlt: string;
   rating: number;
@@ -55,7 +59,7 @@ export const ProductDetails = ({ data }: ProductProps) => {
       <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
       <article className="p-4 prose lg:prose-xl">
-        <NextLinkMarkdown>{data.longDescription}</NextLinkMarkdown>
+        <MDXRemote {...data.longDescription} />
       </article>
       <Rating rating={data.rating} />
     </>

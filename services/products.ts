@@ -1,9 +1,14 @@
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
+
 interface StoreApiResponse {
   id: number;
   title: string;
   price: number;
   description: string;
-  longDescription: string;
+  longDescription: MDXRemoteSerializeResult<
+    Record<string, unknown>,
+    Record<string, unknown>
+  >;
   category: string;
   image: string;
   rating: {
