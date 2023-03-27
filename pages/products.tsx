@@ -1,9 +1,5 @@
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { Main } from "@/components/Main";
 import { InferGetStaticPropsType } from "next";
 import { ProductListItem } from "@/components/Product";
-import { Pagination } from "@/components/Pagination";
 
 interface StoreApiResponse {
   id: number;
@@ -33,29 +29,22 @@ const ProductsPage = ({
   data,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <Main>
-        <Pagination />
-        <ul className="grid  gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {data.map((product) => {
-            return (
-              <li key={product.id} className="shadow-xl border-2">
-                <ProductListItem
-                  data={{
-                    id: product.id,
-                    title: product.title,
-                    thumbnailAlt: product.title,
-                    thumbnailUrl: product.image,
-                  }}
-                />
-              </li>
-            );
-          })}
-        </ul>
-      </Main>
-      <Footer />
-    </div>
+    <ul className="grid  gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+      {data.map((product) => {
+        return (
+          <li key={product.id} className="shadow-xl border-2">
+            <ProductListItem
+              data={{
+                id: product.id,
+                title: product.title,
+                thumbnailAlt: product.title,
+                thumbnailUrl: product.image,
+              }}
+            />
+          </li>
+        );
+      })}
+    </ul>
   );
 };
 

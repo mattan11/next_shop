@@ -31,7 +31,6 @@ export const ProductDetails = ({ data }: ProductProps) => {
           objectFit={"contain"}
         ></Image>
       </div>
-
       <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
       <Rating rating={data.rating} />
@@ -51,7 +50,7 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
           src={data.thumbnailUrl}
           alt={data.thumbnailAlt}
           fill={true}
-          objectFit={"contain"}
+          style={{ objectFit: "contain" }}
         ></Image>
       </div>
       <Link href={`/products/${data.id}/`}>
