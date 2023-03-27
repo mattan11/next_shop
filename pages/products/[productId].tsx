@@ -1,12 +1,15 @@
 import { GetStaticPathsResult, GetStaticPropsContext } from "next";
 import { ProductDetails } from "@/components/Product";
 import Link from "next/link";
+import { getProduct, getProducts } from "@/services/products";
+import { Main } from "@/components/Main";
 
 interface StoreApiResponse {
   id: number;
   title: string;
   price: number;
   description: string;
+  longDescription: string;
   category: string;
   image: string;
   rating: {
@@ -16,8 +19,7 @@ interface StoreApiResponse {
 }
 
 export const getStaticPaths = async (): Promise<GetStaticPathsResult> => {
-  const res = await fetch("https://fakestoreapi.com/products");
-  const products: StoreApiResponse[] = await res.json();
+  const products: StoreApiResponse[] = await getProducts();
 
   const paths = products.map((product: StoreApiResponse) => ({
     params: { productId: product.id.toString() },
@@ -38,10 +40,9 @@ export const getStaticProps = async ({
       notFound: true,
     };
   }
-  const res = await fetch(
-    `https://fakestoreapi.com/products/${params.productId}`
-  );
-  const data: StoreApiResponse | null = await res.json();
+  console.log(params.productId, "params.productId");
+
+  const data = await getProduct(params.productId);
 
   return {
     props: {
@@ -56,7 +57,7 @@ const ProductPage = ({ data }: { data: StoreApiResponse }) => {
   }
 
   return (
-    <div>
+    <Main>
       <Link href="/products">Wróć na stronę produktów</Link>
       <ProductDetails
         data={{
@@ -65,10 +66,11 @@ const ProductPage = ({ data }: { data: StoreApiResponse }) => {
           thumbnailAlt: data.title,
           thumbnailUrl: data.image,
           description: data.description,
+          longDescription: data.longDescription,
           rating: data.rating.rate,
         }}
       />
-    </div>
+    </Main>
   );
 };
 
