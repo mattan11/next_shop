@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Rating } from "./Rating";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
+import { NextSeo } from "next-seo";
+import { NextLinkMarkdown } from "@/components/NextLinkMarkdown";
 
 interface ProductDetails {
   id: number;
@@ -26,17 +27,35 @@ export const ProductDetails = ({ data }: ProductProps) => {
   return (
     <>
       <div className="relative bg-white flex justify-center align-middle w-4/5 h-72 mx-auto my-4">
+        <NextSeo
+          title={data.title}
+          description={data.description}
+          canonical={`https://naszsklep.vercel.app/products/${data.id}`}
+          openGraph={{
+            url: `https://naszsklep.vercel.app/products/${data.id}`,
+            title: data.title,
+            description: data.description,
+            images: [
+              {
+                url: data.thumbnailUrl,
+                alt: data.thumbnailAlt,
+                type: "image/jpeg",
+              },
+            ],
+            siteName: "Sklep testowy",
+          }}
+        />
         <Image
           src={data.thumbnailUrl}
           alt={data.thumbnailAlt}
           fill={true}
-          objectFit={"contain"}
+          style={{ objectFit: "contain" }}
         ></Image>
       </div>
       <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
       <article className="p-4 prose lg:prose-xl">
-        <ReactMarkdown className="p-4">{data.longDescription}</ReactMarkdown>
+        <NextLinkMarkdown>{data.longDescription}</NextLinkMarkdown>
       </article>
       <Rating rating={data.rating} />
     </>

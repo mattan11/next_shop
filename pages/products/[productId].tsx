@@ -40,7 +40,6 @@ export const getStaticProps = async ({
       notFound: true,
     };
   }
-  console.log(params.productId, "params.productId");
 
   const data = await getProduct(params.productId);
 
