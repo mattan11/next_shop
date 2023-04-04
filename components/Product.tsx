@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Rating } from "./Rating";
 import Image from "next/image";
 import { NextSeo } from "next-seo";
-import { NextLinkMarkdown } from "@/components/NextLinkMarkdown";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import { NextLinkMarkdown } from "@/components/NextLinkMarkdown";
+import { useCartState } from "@/components/Cart/CartContext";
 
 interface ProductDetails {
   id: number;
@@ -59,7 +60,7 @@ export const ProductDetails = ({ data }: ProductProps) => {
       <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
       <article className="p-4 prose lg:prose-xl">
-        <MDXRemote {...data.longDescription} />
+        <NextLinkMarkdown>{data.longDescription}</NextLinkMarkdown>
       </article>
       <Rating rating={data.rating} />
     </>
@@ -71,6 +72,17 @@ interface ProductListItemProps {
 }
 
 export const ProductListItem = ({ data }: ProductListItemProps) => {
+  const cartState = useCartState();
+
+  const onAddToCartClickHandle = (data: any) => {
+    cartState.addItemToCart({
+      id: data.id,
+      title: data.title,
+      price: data.price,
+      count: 1,
+    });
+  };
+
   return (
     <>
       <div className="relative bg-white flex justify-center align-middle w-4/5 h-72 mx-auto my-4">
@@ -81,9 +93,17 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
           style={{ objectFit: "contain" }}
         ></Image>
       </div>
-      <Link href={`/products/${data.id}/`}>
-        <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
-      </Link>
+      <div className="p-4 flex flex-col justify-between h-44">
+        <Link href={`/products/${data.id}/`}>
+          <h2 className="px-4 text-3xl font-bold">{data.title}</h2>
+        </Link>
+        <button
+          onClick={() => onAddToCartClickHandle(data)}
+          className="w-full inline-block rounded border border-indigo-600 px-12 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+        >
+          Add to Cart
+        </button>
+      </div>
     </>
   );
 };
