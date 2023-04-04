@@ -4,13 +4,17 @@ import { useCartState } from "@/components/Cart/CartContext";
 export const CartBar = () => {
   const cartState = useCartState();
 
+  const itemsCount = cartState.items?.reduce((acc, item) => {
+    return acc + item.count;
+  }, 0);
+
   return (
     <Link href="/cart" className="text-white relative block">
       <span
-        className="absolute text-gray-700 w-4 h-4 text-sm radius-10 bg-white rounded-full flex items-center justify-center"
+        className="absolute text-gray-700 w-4 h-4 text-xs radius-10 bg-white rounded-full flex items-center justify-center"
         style={{ bottom: "-0.3rem", right: "-0.3rem" }}
       >
-        {cartState?.items?.length}
+        {itemsCount}
       </span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
