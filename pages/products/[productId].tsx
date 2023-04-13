@@ -86,7 +86,7 @@ export const getStaticProps = async ({
 
   return {
     props: {
-      data,
+      data: data.product,
     },
   };
 };
@@ -102,13 +102,13 @@ const ProductPage = ({ data }: any) => {
       <ProductDetails
         data={{
           id: data.id,
-          title: data.title,
+          title: data.name,
           slug: data.slug,
-          thumbnailAlt: data.title,
-          thumbnailUrl: data.image,
+          thumbnailAlt: data.name,
+          thumbnailUrl: data.images?.[0].url,
           description: data.description,
-          longDescription: data.longDescription,
-          rating: data.rating.rate,
+          // longDescription: data.longDescription,
+          rating: 5,
         }}
       />
     </Main>

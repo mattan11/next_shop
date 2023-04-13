@@ -18,9 +18,7 @@ export default function HomePage() {
 
   if (loading) return <p>Loading...</p>;
 
-  if (error) return <p>Error : JSON.strigify(error)</p>;
-
-  console.log(data, "data");
+  if (error) return <p>Error : JSON.stringify(error)</p>;
 
   return (
     <Main>

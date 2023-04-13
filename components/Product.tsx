@@ -11,10 +11,10 @@ export interface ProductDetails {
   title: string;
   slug: string;
   description: string;
-  longDescription: MDXRemoteSerializeResult<
-    Record<string, unknown>,
-    Record<string, unknown>
-  >;
+  // longDescription: MDXRemoteSerializeResult<
+  //   Record<string, unknown>,
+  //   Record<string, unknown>
+  // >;
   thumbnailUrl: string;
   thumbnailAlt: string;
   rating: number;
