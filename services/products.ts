@@ -1,8 +1,11 @@
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
+import { gql } from "@apollo/client";
+import { apolloClient } from "@/graphql/apolloClient";
 
-interface StoreApiResponse {
-  id: number;
-  title: string;
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
   price: number;
   description: string;
   longDescription: MDXRemoteSerializeResult<
@@ -10,23 +13,64 @@ interface StoreApiResponse {
     Record<string, unknown>
   >;
   category: string;
-  image: string;
+  images: {
+    id: string;
+    url: string;
+  }[];
   rating: {
     rate: number;
     count: number;
   };
 }
 
+interface StoreApiResponse {
+  products: Product[];
+}
+
+const GET_PRODUCTS = gql`
+  query getProductsList {
+    products {
+      id
+      slug
+      name
+      price
+      description
+      images(first: 1) {
+        id
+        url
+      }
+    }
+  }
+`;
+
 export const getProducts = async () => {
-  const res = await fetch("https://naszsklep-api.vercel.app/api/products");
-  const data: StoreApiResponse[] = await res.json();
+  const { data } = await apolloClient.query<StoreApiResponse>({
+    query: GET_PRODUCTS,
+  });
+
   return data;
 };
 
-export const getProduct = async (id: string) => {
-  const res = await fetch(
-    `https://naszsklep-api.vercel.app/api/products/${id}`
-  );
-  const data: StoreApiResponse | null = await res.json();
-  return data;
-};
+// export const getProduct = async (slug: string) => {
+//   const GET_PRODUCT = gql`
+//     query getProduct {
+//       product(where: { slug: "${slug}" }) {
+//         id
+//         slug
+//         name
+//         price
+//         description
+//         images(first: 1) {
+//           id
+//           url
+//         }
+//       }
+//     }
+//   `;
+//
+//   const { data } = await apolloClient.query<StoreApiResponse>({
+//     query: GET_PRODUCT,
+//   });
+//
+//   return data;
+// };

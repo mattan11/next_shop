@@ -6,9 +6,10 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { NextLinkMarkdown } from "@/components/NextLinkMarkdown";
 import { useCartState } from "@/components/Cart/CartContext";
 
-interface ProductDetails {
-  id: number;
+export interface ProductDetails {
+  id: string;
   title: string;
+  slug: string;
   description: string;
   longDescription: MDXRemoteSerializeResult<
     Record<string, unknown>,
@@ -21,7 +22,7 @@ interface ProductDetails {
 
 type ProductListItem = Pick<
   ProductDetails,
-  "title" | "thumbnailAlt" | "thumbnailUrl" | "id"
+  "title" | "thumbnailAlt" | "thumbnailUrl" | "id" | "slug"
 >;
 
 interface ProductProps {
@@ -35,20 +36,20 @@ export const ProductDetails = ({ data }: ProductProps) => {
         <NextSeo
           title={data.title}
           description={data.description}
-          canonical={`https://naszsklep.vercel.app/products/${data.id}`}
-          openGraph={{
-            url: `https://naszsklep.vercel.app/products/${data.id}`,
-            title: data.title,
-            description: data.description,
-            images: [
-              {
-                url: data.thumbnailUrl,
-                alt: data.thumbnailAlt,
-                type: "image/jpeg",
-              },
-            ],
-            siteName: "Sklep testowy",
-          }}
+          // canonical={`https://naszsklep.vercel.app/products/${data.id}`}
+          // openGraph={{
+          //   url: `https://naszsklep.vercel.app/products/${data.id}`,
+          //   title: data.title,
+          //   description: data.description,
+          //   images: [
+          //     {
+          //       url: data.thumbnailUrl,
+          //       alt: data.thumbnailAlt,
+          //       type: "image/jpeg",
+          //     },
+          //   ],
+          //   siteName: "Sklep testowy",
+          // }}
         />
         <Image
           src={data.thumbnailUrl}
@@ -60,7 +61,7 @@ export const ProductDetails = ({ data }: ProductProps) => {
       <h2 className="p-4 text-3xl font-bold">{data.title}</h2>
       <p className="p-4">{data.description}</p>
       <article className="p-4 prose lg:prose-xl">
-        <NextLinkMarkdown>{data.longDescription}</NextLinkMarkdown>
+        {/*<NextLinkMarkdown>{data.longDescription}</NextLinkMarkdown>*/}
       </article>
       <Rating rating={data.rating} />
     </>
@@ -77,6 +78,7 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
   const onAddToCartClickHandle = (data: any) => {
     cartState.addItemToCart({
       id: data.id,
+      slug: data.slug,
       title: data.title,
       price: data.price,
       count: 1,
@@ -94,7 +96,7 @@ export const ProductListItem = ({ data }: ProductListItemProps) => {
         ></Image>
       </div>
       <div className="p-4 flex flex-col justify-between h-44">
-        <Link href={`/products/${data.id}/`}>
+        <Link href={`/products/${data.slug}/`}>
           <h2 className="px-4 text-3xl font-bold">{data.title}</h2>
         </Link>
         <button

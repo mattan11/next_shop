@@ -1,34 +1,36 @@
 import { GetStaticPathsResult, GetStaticPropsContext } from "next";
 import { ProductDetails } from "@/components/Product";
 import Link from "next/link";
-import { getProduct, getProducts } from "@/services/products";
+import { getProducts } from "@/services/products";
 import { Main } from "@/components/Main";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
-
-interface StoreApiResponse {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  longDescription: MDXRemoteSerializeResult<
-    Record<string, unknown>,
-    Record<string, unknown>
-  >;
-  category: string;
-  image: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-}
+import { apolloClient } from "@/graphql/apolloClient";
+import { gql } from "@apollo/client";
+import pThrottle from "p-throttle";
 
 export const getStaticPaths = async (): Promise<GetStaticPathsResult> => {
-  const products: StoreApiResponse[] = await getProducts();
+  interface GetProductsSlugs {
+    products: {
+      slug: string;
+    }[];
+  }
 
-  const paths = products.map((product: StoreApiResponse) => ({
-    params: { productId: product.id.toString() },
-  }));
+  const { data } = await apolloClient.query<GetProductsSlugs>({
+    query: gql`
+      query getProductsSlugs {
+        products {
+          slug
+        }
+      }
+    `,
+  });
+
+  const paths = data.products.map((product: any) => {
+    return {
+      params: { productId: product.slug },
+    };
+  });
 
   return {
     paths,
@@ -46,7 +48,34 @@ export const getStaticProps = async ({
     };
   }
 
-  const data = await getProduct(params.productId);
+  const throttle = pThrottle({ limit: 5, interval: 1000 });
+
+  const throttledFetch = throttle(async (...args) => {
+    const GET_PRODUCT = gql`
+      query getProduct($slug: String!) {
+        product(where: { slug: $slug }) {
+          id
+          slug
+          name
+          price
+          description
+          images {
+            id
+            url
+          }
+        }
+      }
+    `;
+
+    const { data } = await apolloClient.query<any>({
+      variables: { slug: params.productId },
+      query: GET_PRODUCT,
+    });
+
+    return data;
+  });
+
+  const data = await throttledFetch();
 
   if (!data) {
     return {
@@ -57,12 +86,12 @@ export const getStaticProps = async ({
 
   return {
     props: {
-      data: { ...data, longDescription: await serialize(data.longDescription) },
+      data,
     },
   };
 };
 
-const ProductPage = ({ data }: { data: StoreApiResponse }) => {
+const ProductPage = ({ data }: any) => {
   if (!data) {
     return <div>Nie znaleziono produktu</div>;
   }
@@ -74,6 +103,7 @@ const ProductPage = ({ data }: { data: StoreApiResponse }) => {
         data={{
           id: data.id,
           title: data.title,
+          slug: data.slug,
           thumbnailAlt: data.title,
           thumbnailUrl: data.image,
           description: data.description,
