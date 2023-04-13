@@ -1,0 +1,10 @@
+overwrite: true
+schema: "https://api-eu-central-1-shared-euc1-02.hygraph.com/v2/clgc19cl93s4401tf9j8v4kau/master"
+documents: "graphql/*.graphql"
+generates:
+  generated/:
+    preset: "client"
+    plugins: []
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"
